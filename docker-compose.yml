@@ -1,0 +1,169 @@
+services:
+
+  afa-postgres:
+    container_name: afa-postgres
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./database/init_databases.sql:/docker-entrypoint-initdb.d/init_databases.sql
+    profiles:
+      - cloud
+      - local
+
+  afa-discovery:
+    container_name: afa-discovery
+    image: afa-discovery
+    ports:
+      - "8761:8761"
+    build:
+      context: "afa-discovery"
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: cloud
+      EUREKA_CLIENT_USERNAME: eureka_client
+      EUREKA_CLIENT_PASSWORD: eureka_password
+      PORT: 8761
+    profiles:
+      - cloud
+
+  afa-config:
+    container_name: afa-config
+    image: afa-config
+    ports:
+      - "8888:8888"
+    build:
+      context: "afa-config"
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: native
+      DISCOVERY_SERVER_URL: http://eureka_client:eureka_password@afa-discovery:8761/eureka
+      PORT: 8888
+
+      # other services configs
+        # gateway
+      AFA_USER_NAME: afa-user
+      AFA_ORDER_NAME: afa_order
+      AFA_PROCESS_NAME: afa-process
+        # afa-user
+      AFA_USER_R2DBC_URL: r2dbc:postgresql://afa-postgres:5432/afa_user
+      AFA_USER_JDBC_URL: jdbc:postgresql://afa-postgres:5432/afa_user
+      AFA_USER_DB_USER: username
+      AFA_USER_DB_PASSWORD: password
+      SECRET: aGZiYmtiYWllYmNpZWFpZWJsZWNldWNlY2xhZWNhaWJlbGNhZWN3Q0VCV0VXSUM=
+      ACCESS: 1
+      REFRESH: 24
+        # afa-order
+      AFA_ORDER_JDBC_URL: jdbc:postgresql://afa-postgres:5432/afa_order
+      AFA_ORDER_DB_USER: username
+      AFA_ORDER_DB_PASSWORD: password
+        # afa-process
+      AFA_PROCESS_JDBC_URL: jdbc:postgresql://afa-postgres:5432/afa_process
+      AFA_PROCESS_DB_USER: username
+      AFA_PROCESS_DB_PASSWORD: password
+      AFA_ORDER_URL: afa_order
+
+    depends_on:
+      - afa-discovery
+    profiles:
+      - cloud
+
+  afa-admin:
+    container_name: afa-admin
+    image: afa-admin
+    ports:
+      - "8187:8187"
+    build:
+      context: "afa-admin"
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: cloud
+      DISCOVERY_SERVER_URL: http://eureka_client:eureka_password@afa-discovery:8761/eureka
+      PORT: 8187
+    depends_on:
+      - afa-discovery
+      - afa-config
+    profiles:
+      - cloud
+
+  afa-gateway:
+    container_name: afa-gateway
+    image: afa-gateway
+    ports:
+      - "8080:8080"
+    build:
+      context: "afa-gateway"
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: cloud
+      DISCOVERY_SERVER_URL: http://eureka_client:eureka_password@afa-discovery:8761/eureka
+      API_PREFIX: /api/v2
+      PORT: 8080
+    depends_on:
+      - afa-discovery
+      - afa-config
+    profiles:
+      - cloud
+
+  afa-user:
+    container_name: afa-user
+    image: afa-user
+    ports:
+      - "8383:8383"
+    build:
+      context: "afa-user"
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: cloud
+      DISCOVERY_SERVER_URL: http://eureka_client:eureka_password@afa-discovery:8761/eureka
+      PORT: 8383
+    depends_on:
+      - afa-postgres
+      - afa-discovery
+      - afa-config
+      - afa-gateway
+    profiles:
+      - cloud
+
+  afa-order:
+    container_name: afa-order
+    image: afa-order
+    ports:
+      - "8381:8381"
+    build:
+      context: "afa-order"
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: cloud
+      DISCOVERY_SERVER_URL: http://eureka_client:eureka_password@afa-discovery:8761/eureka
+      PORT: 8381
+    depends_on:
+      - afa-postgres
+      - afa-discovery
+      - afa-config
+      - afa-gateway
+    profiles:
+      - cloud
+
+  afa-process:
+    container_name: afa-process
+    image: afa-process
+    ports:
+      - "8387:8387"
+    build:
+      context: "afa-process"
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: cloud
+      DISCOVERY_SERVER_URL: http://eureka_client:eureka_password@afa-discovery:8761/eureka
+      PORT: 8387
+    depends_on:
+      - afa-postgres
+      - afa-discovery
+      - afa-config
+      - afa-gateway
+    profiles:
+      - cloud

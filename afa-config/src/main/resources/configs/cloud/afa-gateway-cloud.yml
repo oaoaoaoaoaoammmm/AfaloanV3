@@ -1,0 +1,51 @@
+spring:
+  services:
+    urls:
+      afa-user: ${AFA_USER_NAME:afa-user}
+      afa-order: ${AFA_ORDER_NAME:afa-order}
+      afa-process: ${AFA_PROCESS_NAME:afa-process}
+
+#  jackson:
+#    property-naming-strategy: SNAKE_CASE
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      afa-user-circuit-breaker:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 2s
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        permittedNumberOfCallsInHalfOpenState: 5
+      afa-order-circuit-breaker:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 2s
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        permittedNumberOfCallsInHalfOpenState: 5
+      afa-process-circuit-breaker:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 2s
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        permittedNumberOfCallsInHalfOpenState: 5
+#        recordExceptions:
+#          - java.lang.Throwable
+#        ignore-exceptions:
+#          - java.lang.RuntimeException
+
+management:
+  endpoints:
+    web.exposure.include: "*"
+  endpoint:
+    health:
+      show-details: always
