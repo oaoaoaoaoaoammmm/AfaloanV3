@@ -73,6 +73,18 @@ class RouteConfiguration {
                     filter(authFilter.apply(AuthenticationFilter.Config))
                 }
             }
+            route(id = "${props.afaFile}-route") {
+                uri("lb://${props.afaFile}")
+                path("$apiPrefix/files/**")
+                filters {
+                    stripPrefix(2)
+                    circuitBreaker {
+                        it.name = "${props.afaFile}-circuit-breaker"
+                        it.fallbackUri = URI.create("forward:/fallback")
+                    }
+                    filter(authFilter.apply(AuthenticationFilter.Config))
+                }
+            }
         }
     }
 }

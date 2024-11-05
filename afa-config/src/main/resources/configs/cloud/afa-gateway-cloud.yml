@@ -4,6 +4,7 @@ spring:
       afa-user: ${AFA_USER_NAME:afa-user}
       afa-order: ${AFA_ORDER_NAME:afa-order}
       afa-process: ${AFA_PROCESS_NAME:afa-process}
+      afa-file: ${AFA_FILE_NAME:afa-file}
 
 #  jackson:
 #    property-naming-strategy: SNAKE_CASE
@@ -30,6 +31,15 @@ resilience4j:
         automaticTransitionFromOpenToHalfOpenEnabled: true
         permittedNumberOfCallsInHalfOpenState: 5
       afa-process-circuit-breaker:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 2s
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        permittedNumberOfCallsInHalfOpenState: 5
+      afa-file-circuit-breaker:
         registerHealthIndicator: true
         slidingWindowType: COUNT_BASED
         slidingWindowSize: 10

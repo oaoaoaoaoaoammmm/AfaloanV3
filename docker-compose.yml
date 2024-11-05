@@ -1,7 +1,7 @@
 services:
 
   afa-postgres:
-    container_name: afa-postgres
+    container_name: afa-postgres-v3
     image: postgres:16
     ports:
       - "5432:5432"
@@ -14,9 +14,25 @@ services:
       - cloud
       - local
 
+  afa-minio:
+    container_name: afa-minio-v3
+    image: bitnami/minio:2024
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: username
+      MINIO_ROOT_PASSWORD: password
+      MINIO_DEFAULT_BUCKETS: afa-file
+    #    volumes:
+    #      -
+    profiles:
+      - cloud
+      - local
+
   afa-discovery:
-    container_name: afa-discovery
-    image: afa-discovery
+    container_name: afa-discovery-v3
+    image: afa-discovery-v3
     ports:
       - "8761:8761"
     build:
@@ -31,8 +47,8 @@ services:
       - cloud
 
   afa-config:
-    container_name: afa-config
-    image: afa-config
+    container_name: afa-config-v3
+    image: afa-config-v3
     ports:
       - "8888:8888"
     build:
@@ -65,6 +81,12 @@ services:
       AFA_PROCESS_DB_USER: username
       AFA_PROCESS_DB_PASSWORD: password
       AFA_ORDER_URL: afa_order
+        # afa-file
+      MINIO_ENDPOINT: http://afa-minio:9000
+      MINIO_ACCESS_KEY: username
+      MINIO_SECRET_KEY: password
+      MINIO_BUCKET: afa-file
+      MINIO_REGION: us-east-1
 
     depends_on:
       - afa-discovery
@@ -72,8 +94,8 @@ services:
       - cloud
 
   afa-admin:
-    container_name: afa-admin
-    image: afa-admin
+    container_name: afa-admin-v3
+    image: afa-admin-v3
     ports:
       - "8187:8187"
     build:
@@ -90,8 +112,8 @@ services:
       - cloud
 
   afa-gateway:
-    container_name: afa-gateway
-    image: afa-gateway
+    container_name: afa-gateway-v3
+    image: afa-gateway-v3
     ports:
       - "8080:8080"
     build:
@@ -100,7 +122,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: cloud
       DISCOVERY_SERVER_URL: http://eureka_client:eureka_password@afa-discovery:8761/eureka
-      API_PREFIX: /api/v2
+      API_PREFIX: /api/v3
       PORT: 8080
     depends_on:
       - afa-discovery
@@ -109,8 +131,8 @@ services:
       - cloud
 
   afa-user:
-    container_name: afa-user
-    image: afa-user
+    container_name: afa-user-v3
+    image: afa-user-v3
     ports:
       - "8383:8383"
     build:
@@ -129,8 +151,8 @@ services:
       - cloud
 
   afa-order:
-    container_name: afa-order
-    image: afa-order
+    container_name: afa-order-v3
+    image: afa-order-v3
     ports:
       - "8381:8381"
     build:
@@ -149,8 +171,8 @@ services:
       - cloud
 
   afa-process:
-    container_name: afa-process
-    image: afa-process
+    container_name: afa-process-v3
+    image: afa-process-v3
     ports:
       - "8387:8387"
     build:
@@ -162,6 +184,26 @@ services:
       PORT: 8387
     depends_on:
       - afa-postgres
+      - afa-discovery
+      - afa-config
+      - afa-gateway
+    profiles:
+      - cloud
+
+  afa-file:
+    container_name: afa-file-v3
+    image: afa-file-v3
+    ports:
+      - "8389:8389"
+    build:
+      context: "afa-file"
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: cloud
+      DISCOVERY_SERVER_URL: http://eureka_client:eureka_password@afa-discovery:8761/eureka
+      PORT: 8389
+    depends_on:
+      - afa-minio
       - afa-discovery
       - afa-config
       - afa-gateway
