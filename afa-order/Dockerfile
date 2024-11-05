@@ -12,6 +12,6 @@ FROM amazoncorretto:21-alpine
 
 WORKDIR /app
 
-COPY --from=build /workspace/build/libs/afa-order-2.0.0.jar ./afa-order.jar
+COPY --from=build /workspace/build/libs/afa-order-3.0.0.jar ./afa-order.jar
 
 ENTRYPOINT ["java", "-jar", "afa-order.jar"]

@@ -7,5 +7,6 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding
 data class ServiceUrlsProperties@ConstructorBinding constructor(
     val afaUser: String,
     val afaOrder: String,
-    val afaProcess: String
+    val afaProcess: String,
+    val afaFile: String
 )

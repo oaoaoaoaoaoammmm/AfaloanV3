@@ -12,6 +12,6 @@ FROM amazoncorretto:21-alpine
 
 WORKDIR /app
 
-COPY --from=build /workspace/build/libs/afa-user-2.0.0.jar ./afa-user.jar
+COPY --from=build /workspace/build/libs/afa-user-3.0.0.jar ./afa-user.jar
 
 ENTRYPOINT ["java", "-jar", "afa-user.jar"]
