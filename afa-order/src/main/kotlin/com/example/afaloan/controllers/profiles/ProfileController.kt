@@ -5,9 +5,15 @@ import com.example.afaloan.controllers.profiles.dtos.CreateProfileRequest
 import com.example.afaloan.controllers.profiles.dtos.CreateProfileResponse
 import com.example.afaloan.controllers.profiles.dtos.ProfileDto
 import com.example.afaloan.controllers.profiles.dtos.UpdateProfileRequest
+import com.example.afaloan.exceptions.Error
 import com.example.afaloan.mappers.ProfileMapper
 import com.example.afaloan.services.ProfileService
 import com.example.afaloan.utils.logger
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,6 +33,36 @@ class ProfileController(
     private val profileService: ProfileService
 ) {
 
+    @Operation(summary = "Поиск профиля")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Профиль найден",
+                content = [Content(schema = Schema(implementation = ProfileDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Не найден",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun find(@PathVariable id: UUID): ProfileDto {
@@ -35,6 +71,31 @@ class ProfileController(
         return profileMapper.convert(profile)
     }
 
+    @Operation(summary = "Создание профиля")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                description = "Профиль создан",
+                content = [Content(schema = Schema(implementation = CreateProfileResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@Valid @RequestBody request: CreateProfileRequest): CreateProfileResponse {
@@ -44,6 +105,36 @@ class ProfileController(
         return CreateProfileResponse(profileId)
     }
 
+    @Operation(summary = "Обноление профиля")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Профиль обновлен",
+                content = [Content(schema = Schema(implementation = ProfileDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Не найден",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun update(

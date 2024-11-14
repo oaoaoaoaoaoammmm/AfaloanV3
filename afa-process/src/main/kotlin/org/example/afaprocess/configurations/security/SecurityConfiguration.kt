@@ -31,7 +31,7 @@ class SecurityConfiguration(
                 exchanges.pathMatchers(
                     "/actuator/**",
                     "/webjars/**",
-                    "/v3/api-docs/**",
+                    "afa-process/v3/api-docs/**",
                 ).permitAll()
                 exchanges.pathMatchers("/**").authenticated()
             }

@@ -6,6 +6,7 @@ afa-config/.gradle
 afa-process/.gradle
 afa-order/.gradle
 afa-user/.gradle
+afa-file/.gradle
 build/
 .idea
 !gradle/wrapper/gradle-wrapper.jar

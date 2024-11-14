@@ -29,7 +29,7 @@ class SecurityConfiguration(
                 configurer.requestMatchers(
                     "/actuator/**",
                     "/swagger-ui/**",
-                    "/v3/api-docs/**",
+                    "afa-order/v3/api-docs/**",
                 ).permitAll()
                     .requestMatchers("/**").authenticated()
             }

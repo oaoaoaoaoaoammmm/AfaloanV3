@@ -1,4 +1,4 @@
-package org.example.afafile
+package com.example.gateway.configurations
 
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
@@ -14,9 +14,7 @@ class SwaggerConfig {
     @Bean
     fun openAPI(): OpenAPI {
         return OpenAPI()
-            .addSecurityItem(
-                SecurityRequirement().addList("Bearer Authentication")
-            )
+            .addSecurityItem(SecurityRequirement().addList("Bearer Authentication"))
             .components(
                 Components().addSecuritySchemes(
                     "Bearer Authentication",
@@ -26,8 +24,6 @@ class SwaggerConfig {
                         .scheme("bearer")
                 )
             )
-            .info(
-                Info().title("Afaloan API").version("1.0")
-            )
+            .info(Info().title("Afaloan API").version("3.0"))
     }
 }

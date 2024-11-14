@@ -25,6 +25,7 @@ spring:
 springdoc:
   api-docs:
     enabled: true
+    path: /afa-process/v3/api-docs
 
 server:
   port: ${PORT:8387}

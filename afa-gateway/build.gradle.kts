@@ -23,6 +23,8 @@ repositories {
 extra["springCloudVersion"] = "2023.0.3"
 
 val kLoggingVersion by extra("6.0.8")
+val openApiStarterVersion by extra("2.6.0")
+val openApiVersion by extra("2.6.0")
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -39,6 +41,9 @@ dependencies {
 
     // logger
     implementation("io.github.oshai:kotlin-logging-jvm:$kLoggingVersion")
+
+    // open api
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:$openApiVersion")
 
     // tests
     testImplementation("org.springframework.boot:spring-boot-starter-test")

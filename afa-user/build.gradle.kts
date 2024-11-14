@@ -105,6 +105,7 @@ kover {
 				classes(
 					"*configurations*",
 					"*utils*",
+					"*exceptions*",
 					"*AfaloanApplication*"
 				)
 			}

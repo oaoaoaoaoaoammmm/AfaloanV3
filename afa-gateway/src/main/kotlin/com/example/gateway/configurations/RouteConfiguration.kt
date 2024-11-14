@@ -34,7 +34,10 @@ class RouteConfiguration {
             }
             route(id = "${props.afaUser}-route-users") {
                 uri("lb://${props.afaUser}")
-                path("$apiPrefix/users/**")
+                path(
+                    "$apiPrefix/users/**",
+                    "$apiPrefix/${props.afaUser}/**"
+                )
                 filters {
                     stripPrefix(2)
                     circuitBreaker {
@@ -50,7 +53,8 @@ class RouteConfiguration {
                     "$apiPrefix/bids/**",
                     "$apiPrefix/boiling-points/**",
                     "$apiPrefix/microloans/**",
-                    "$apiPrefix/profiles/**"
+                    "$apiPrefix/profiles/**",
+                    "$apiPrefix/${props.afaOrder}/**"
                 )
                 filters {
                     stripPrefix(2)
@@ -63,7 +67,10 @@ class RouteConfiguration {
             }
             route(id = "${props.afaProcess}-route") {
                 uri("lb://${props.afaProcess}")
-                path("$apiPrefix/processes/**")
+                path(
+                    "$apiPrefix/processes/**",
+                    "$apiPrefix/${props.afaProcess}/**"
+                )
                 filters {
                     stripPrefix(2)
                     circuitBreaker {
@@ -75,7 +82,10 @@ class RouteConfiguration {
             }
             route(id = "${props.afaFile}-route") {
                 uri("lb://${props.afaFile}")
-                path("$apiPrefix/files/**")
+                path(
+                    "$apiPrefix/files/**",
+                    "$apiPrefix/${props.afaFile}/**"
+                )
                 filters {
                     stripPrefix(2)
                     circuitBreaker {

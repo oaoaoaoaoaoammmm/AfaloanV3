@@ -3,11 +3,16 @@ package com.example.afaloan.controllers.microloans
 import com.example.afaloan.controllers.microloans.MicroloanController.Companion.ROOT_URI
 import com.example.afaloan.controllers.microloans.dtos.CreateMicroloanResponse
 import com.example.afaloan.controllers.microloans.dtos.MicroloanDto
+import com.example.afaloan.exceptions.Error
 import com.example.afaloan.mappers.MicroloanMapper
 import com.example.afaloan.models.Microloan
 import com.example.afaloan.services.MicroloanService
 import com.example.afaloan.utils.logger
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import jakarta.validation.Valid
 import org.springdoc.core.converters.models.PageableAsQueryParam
 import org.springframework.data.domain.Page
@@ -33,6 +38,31 @@ class MicroloanController(
     private val microloanService: MicroloanService
 ) {
 
+    @Operation(summary = "Поиск микрозаймов")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Микрозаймы найдены",
+                content = [Content(schema = Schema(implementation = Microloan::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @GetMapping(params = ["page"])
     @PageableAsQueryParam
     @ResponseStatus(HttpStatus.OK)
@@ -43,6 +73,36 @@ class MicroloanController(
         return microloanService.findPage(pageable)
     }
 
+    @Operation(summary = "Поиск микрозайма")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Микрозайм найден",
+                content = [Content(schema = Schema(implementation = MicroloanDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Не найден",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun find(@PathVariable id: UUID): MicroloanDto {
@@ -51,6 +111,31 @@ class MicroloanController(
         return microloanMapper.convert(microloan)
     }
 
+    @Operation(summary = "Создание микрозайма")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                description = "Микрозайм создан",
+                content = [Content(schema = Schema(implementation = CreateMicroloanResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'WORKER')")
@@ -61,6 +146,36 @@ class MicroloanController(
         return CreateMicroloanResponse(microloanId)
     }
 
+    @Operation(summary = "Обновление микрозайма")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Микрозайм обновлен",
+                content = [Content(schema = Schema(implementation = MicroloanDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Не найден",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'WORKER')")
@@ -74,6 +189,31 @@ class MicroloanController(
             .let { microloanMapper.convert(it) }
     }
 
+    @Operation(summary = "Удаление микрозайма")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "204",
+                description = "Микрозайм удален",
+                content = [Content(schema = Schema(implementation = MicroloanDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'WORKER')")

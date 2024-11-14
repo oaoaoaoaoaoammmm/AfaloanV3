@@ -1,4 +1,4 @@
-package com.example.afaloan.configurations
+package org.example.afafile.configurations
 
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
@@ -10,6 +10,6 @@ class SwaggerConfig {
 
     @Bean
     fun openAPI(): OpenAPI {
-        return OpenAPI().info(Info().title("AfaOrder API").version("3.0"))
+        return OpenAPI().info(Info().title("AfaFile API").version("1.0"))
     }
 }

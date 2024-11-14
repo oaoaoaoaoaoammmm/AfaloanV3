@@ -1,5 +1,11 @@
 package org.example.afauser.controllers.users
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.example.afauser.controllers.users.UserController.Companion.ROOT_URI
 import org.example.afauser.controllers.users.dtos.UpdateRoleRequest
@@ -20,7 +26,9 @@ import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.RequestParam
 import reactor.core.publisher.Mono
 import java.util.*
+import org.example.afauser.exceptions.Error as Error1
 
+@Tag(name = "User controller", description = "Контроллер для работы с пользователями")
 @RestController
 @RequestMapping(ROOT_URI)
 class UserController(
@@ -28,6 +36,31 @@ class UserController(
     private val userService: UserService
 ) {
 
+    @Operation(summary = "Поиск пользователя по id")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Пользователь найден",
+                content = [Content(schema = Schema(implementation = UserDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            )
+        ]
+    )
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun find(@PathVariable id: UUID): Mono<UserDto> {
@@ -35,6 +68,31 @@ class UserController(
         return userService.find(id).map(userMapper::convert)
     }
 
+    @Operation(summary = "Проверка существования пользователя по логину")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Пользователь существует",
+                content = [Content(schema = Schema(implementation = UserDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            )
+        ]
+    )
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     fun exists(@RequestParam username: String): Mono<Boolean> {
@@ -42,6 +100,31 @@ class UserController(
         return userService.isExists(username)
     }
 
+    @Operation(summary = "Удаление пользователя")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "204",
+                description = "Пользователь удален",
+                content = [Content(schema = Schema(implementation = UserDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            )
+        ]
+    )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable id: UUID): Mono<Void> {
@@ -49,6 +132,31 @@ class UserController(
         return userService.delete(id)
     }
 
+    @Operation(summary = "Обновление ролей пользователя")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "204",
+                description = "Роли изменены",
+                content = [Content(schema = Schema(implementation = UserDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            )
+        ]
+    )
     @PatchMapping("/{id}/$ROLES")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('SUPERVISOR')")
@@ -62,6 +170,31 @@ class UserController(
         }
     }
 
+    @Operation(summary = "Блокировка пользователя")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "204",
+                description = "Заблокирован",
+                content = [Content(schema = Schema(implementation = UserDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            )
+        ]
+    )
     @PatchMapping("/{id}/$BLOCK")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'WORKER')")
@@ -70,6 +203,31 @@ class UserController(
         return userService.block(id).let { Mono.empty() }
     }
 
+    @Operation(summary = "Разблокировка пользователя")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "204",
+                description = "Разблокирован",
+                content = [Content(schema = Schema(implementation = UserDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            )
+        ]
+    )
     @DeleteMapping("/{id}/$BLOCK")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'WORKER')")
@@ -78,6 +236,31 @@ class UserController(
         return userService.unblock(id).let { Mono.empty() }
     }
 
+    @Operation(summary = "Подтверждение пользователя")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "204",
+                description = "Подтвержден",
+                content = [Content(schema = Schema(implementation = UserDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            )
+        ]
+    )
     @PatchMapping("/{id}/$CONFIRM")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'WORKER')")
