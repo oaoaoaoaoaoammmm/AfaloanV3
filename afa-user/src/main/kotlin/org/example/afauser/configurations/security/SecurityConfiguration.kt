@@ -34,7 +34,7 @@ class SecurityConfiguration(
                     "/actuator/**",
                     "/webjars/**",
                     "/swagger-ui/**",
-                    "/v3/api-docs/**",
+                    "afa-user/v3/api-docs/**",
                     "/auth/tokens/**"
                 ).permitAll()
                 exchanges.pathMatchers("/**").authenticated()

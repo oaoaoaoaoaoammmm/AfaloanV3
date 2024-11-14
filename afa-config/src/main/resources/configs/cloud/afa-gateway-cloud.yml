@@ -53,6 +53,22 @@ resilience4j:
 #        ignore-exceptions:
 #          - java.lang.RuntimeException
 
+springdoc:
+  swagger-ui:
+    enabled: true
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /v3/api-docs
+        name: afa-gateway
+      - url: /api/v3/afa-user/v3/api-docs
+        name: afa-user
+      - url: /api/v3/afa-order/v3/api-docs
+        name: afa-order
+      - url: /api/v3/afa-process/v3/api-docs
+        name: afa-process
+      - url: /api/v3/afa-file/v3/api-docs
+        name: afa-file
+
 management:
   endpoints:
     web.exposure.include: "*"

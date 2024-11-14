@@ -13,9 +13,5 @@ enum class ErrorCode {
     FILE_SERVICE_UNAVAILABLE,
 
     // user errors
-    FORBIDDEN,
-    USER_NOT_FOUND,
-    USER_ALREADY_EXIST,
-    USER_PASSWORD_INCORRECT,
-    ROLE_NOT_FOUND,
+    FORBIDDEN
 }

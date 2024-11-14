@@ -4,11 +4,16 @@ import com.example.afaloan.controllers.boilingpoints.BoilingPointController.Comp
 import com.example.afaloan.controllers.boilingpoints.dtos.CreateBoilingPointRequest
 import com.example.afaloan.controllers.boilingpoints.dtos.CreateBoilingPointResponse
 import com.example.afaloan.controllers.boilingpoints.dtos.UpdateBoilingPointRequest
+import com.example.afaloan.exceptions.Error
 import com.example.afaloan.mappers.BoilingPointMapper
 import com.example.afaloan.models.BoilingPoint
 import com.example.afaloan.services.BoilingPointService
 import com.example.afaloan.utils.logger
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import jakarta.validation.Valid
 import org.springdoc.core.converters.models.PageableAsQueryParam
 import org.springframework.data.domain.Page
@@ -34,6 +39,31 @@ class BoilingPointController(
     private val boilingPointService: BoilingPointService
 ) {
 
+    @Operation(summary = "Поиск точек кипения")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Точки найдены",
+                content = [Content(schema = Schema(implementation = BoilingPoint::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @GetMapping
     @PageableAsQueryParam
     @ResponseStatus(HttpStatus.OK)
@@ -44,6 +74,31 @@ class BoilingPointController(
         return boilingPointService.findPage(pageable)
     }
 
+    @Operation(summary = "Поиск точки кипения")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Точка найдена",
+                content = [Content(schema = Schema(implementation = BoilingPoint::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun find(@PathVariable id: UUID): BoilingPoint {
@@ -51,6 +106,31 @@ class BoilingPointController(
         return boilingPointService.find(id)
     }
 
+    @Operation(summary = "Создание точки кипения")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                description = "Точка создана",
+                content = [Content(schema = Schema(implementation = CreateBoilingPointResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'WORKER')")
@@ -60,6 +140,36 @@ class BoilingPointController(
         return CreateBoilingPointResponse(boilingPointService.create(boilingPoint))
     }
 
+    @Operation(summary = "Обновление точки кипения")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Точка создана",
+                content = [Content(schema = Schema(implementation = BoilingPoint::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Не найдено",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'WORKER')")
@@ -72,6 +182,31 @@ class BoilingPointController(
         return boilingPointService.update(id, boilingPoint)
     }
 
+    @Operation(summary = "Удаление точки кипения")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "204",
+                description = "Точка удалена",
+                content = [Content(schema = Schema(implementation = Void::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'WORKER')")

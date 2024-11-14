@@ -15,3 +15,7 @@ server:
   api:
     prefix: ${API_PREFIX:/api/v3}
   port: ${PORT:8080}
+
+springdoc:
+  api-docs:
+    enabled: true

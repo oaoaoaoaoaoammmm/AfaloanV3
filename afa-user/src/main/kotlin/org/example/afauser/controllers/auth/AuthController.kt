@@ -1,5 +1,12 @@
 package org.example.afauser.controllers.auth
 
+import io.swagger.v3.oas.annotations.Hidden
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.example.afauser.controllers.auth.AuthController.Companion.ROOT_URI
 import org.example.afauser.controllers.auth.dtos.AuthorizeUserRequest
@@ -21,7 +28,9 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 
 import reactor.core.publisher.Mono
+import org.example.afauser.exceptions.Error as Error1
 
+@Tag(name = "Auth controller", description = "Контроллер для работы с авторизацией и аутентификацией")
 @RestController
 @RequestMapping(ROOT_URI)
 class AuthController(
@@ -29,6 +38,31 @@ class AuthController(
     private val authService: AuthService,
 ) {
 
+    @Operation(summary = "Регистрация пользователя")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                description = "Пользователь создан",
+                content = [Content(schema = Schema(implementation = RegisterUserResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            )
+        ]
+    )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('SUPERVISOR')")
@@ -40,6 +74,7 @@ class AuthController(
             }.map { RegisterUserResponse(it) }
     }
 
+    @Hidden
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("isAuthenticated()")
@@ -48,6 +83,26 @@ class AuthController(
         return authService.getAuthDetails()
     }
 
+    @Operation(summary = "Получение токенов")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                description = "Токены созданы",
+                content = [Content(schema = Schema(implementation = AuthorizeUserResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            )
+        ]
+    )
     @PostMapping(TOKENS)
     @ResponseStatus(HttpStatus.CREATED)
     fun authorize(@Valid @RequestBody request: Mono<AuthorizeUserRequest>): Mono<AuthorizeUserResponse> {
@@ -58,6 +113,26 @@ class AuthController(
             }
     }
 
+    @Operation(summary = "Обновление токенов")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                description = "Токены созданы",
+                content = [Content(schema = Schema(implementation = AuthorizeUserResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error1::class))]
+            )
+        ]
+    )
     @PostMapping(TOKENS + REFRESH)
     @ResponseStatus(HttpStatus.CREATED)
     fun reAuthorize(@RequestParam refresh: String): Mono<AuthorizeUserResponse> {

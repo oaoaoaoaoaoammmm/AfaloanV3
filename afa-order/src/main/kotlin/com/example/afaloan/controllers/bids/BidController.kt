@@ -5,11 +5,16 @@ import com.example.afaloan.controllers.bids.dtos.BidDto
 import com.example.afaloan.controllers.bids.dtos.BidView
 import com.example.afaloan.controllers.bids.dtos.CreateBidRequest
 import com.example.afaloan.controllers.bids.dtos.CreateBidResponse
+import com.example.afaloan.exceptions.Error
 import com.example.afaloan.mappers.BidMapper
 import com.example.afaloan.models.enumerations.BidStatus
 import com.example.afaloan.services.BidService
 import com.example.afaloan.utils.logger
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -34,6 +39,36 @@ class BidController(
     private val bidService: BidService
 ) {
 
+    @Operation(summary = "Поиск заявки")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Заявка найдена",
+                content = [Content(schema = Schema(implementation = BidDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Заявка не найдена",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun find(@PathVariable id: UUID): BidDto {
@@ -41,6 +76,31 @@ class BidController(
         return bidService.find(id).let(bidMapper::convertToDto)
     }
 
+    @Operation(summary = "Поиск заявок по Id точки кипения")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Заявки найдены",
+                content = [Content(schema = Schema(implementation = BidView::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @GetMapping(params = ["boilingPointId"])
     @ResponseStatus(HttpStatus.OK)
     fun findPageByBoilingPointId(
@@ -51,6 +111,31 @@ class BidController(
         return bidService.findPageByBoilingPointId(boilingPointId, pageable).map(bidMapper::convertToView)
     }
 
+    @Operation(summary = "Поиск заявок по Id профиля")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Заявки найдены",
+                content = [Content(schema = Schema(implementation = BidView::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @GetMapping(params = ["profileId"])
     @ResponseStatus(HttpStatus.OK)
     fun findPageByProfileId(
@@ -61,6 +146,31 @@ class BidController(
         return bidService.findPageByProfileId(profileId, pageable).map(bidMapper::convertToView)
     }
 
+    @Operation(summary = "Поиск заявок по Id микрозайма")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Заявки найдены",
+                content = [Content(schema = Schema(implementation = BidView::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @GetMapping(params = ["microloanId"])
     @ResponseStatus(HttpStatus.OK)
     fun findPageByMicroloanId(
@@ -71,6 +181,36 @@ class BidController(
         return bidService.findPageByMicroloanId(microloanId, pageable).map(bidMapper::convertToView)
     }
 
+    @Operation(summary = "Создание заявки")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                description = "Заявки найдены",
+                content = [Content(schema = Schema(implementation = CreateBidResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Не найдено",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@RequestBody @Valid request: CreateBidRequest): CreateBidResponse {
@@ -80,6 +220,36 @@ class BidController(
         return CreateBidResponse(id)
     }
 
+    @Operation(summary = "Обновление статуса заявки")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "204",
+                description = "Заявки найдены",
+                content = [Content(schema = Schema(implementation = CreateBidResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Неверный запрос",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Не доступно",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Не найдено",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Сервис не доступен",
+                content = [Content(schema = Schema(implementation = Error::class))]
+            )
+        ]
+    )
     @PatchMapping(value = ["/{id}"], params = ["status"])
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'WORKER')")

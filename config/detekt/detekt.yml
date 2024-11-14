@@ -778,3 +778,5 @@ style:
     excludeImports:
       - 'java.util.*'
       - 'java.util.stream.*'
+      - 'org.springframework.http.*'
+      - 'org.springframework.web.bind.annotation.*'

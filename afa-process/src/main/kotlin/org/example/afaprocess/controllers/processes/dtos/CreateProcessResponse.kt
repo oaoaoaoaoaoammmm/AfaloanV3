@@ -1,5 +1,10 @@
 package org.example.afaprocess.controllers.processes.dtos
 
+import io.swagger.v3.oas.annotations.media.Schema
 import java.util.*
 
-data class CreateProcessResponse(val id: UUID)
+@Schema
+data class CreateProcessResponse(
+    @Schema(description = "Id")
+    val id: UUID
+)

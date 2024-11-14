@@ -32,7 +32,7 @@ repositories {
 
 extra["springCloudVersion"] = "2023.0.3"
 
-val openApiStarterVersion by extra("2.4.0")
+val openApiVersion by extra("2.6.0")
 val kLoggingVersion by extra("6.0.8")
 val preliquibaseVersion by extra("1.5.1")
 val mockitoKotlinVersion by extra("5.3.1")
@@ -75,8 +75,7 @@ dependencies {
 	implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:$shedLockVersion")
 
 	// open api
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiStarterVersion")
-	implementation("org.springdoc:springdoc-openapi-starter-common:$openApiStarterVersion")
+	implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:$openApiVersion")
 
 	// tests
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -9,8 +9,8 @@ spring:
 #    property-naming-strategy: SNAKE_CASE
 
   datasource:
-    url: ${AFA_ORDER_JDBC_URL:jdbc:postgresql://afa-postgres:5432/afa_order}
-    # url: ${AFA_ORDER_JDBC_URL:jdbc:postgresql://localhost:5432/afa_order}
+    url: ${AFA_ORDER_JDBC_URL:jdbc:postgresql://localhost:5432/afa_order}
+    # url: ${AFA_ORDER_JDBC_URL:jdbc:postgresql://afa-postgres:5432/afa_order}
     username: ${AFA_ORDER_DB_USER:username}
     password: ${AFA_ORDER_DB_PASSWORD:password}
 
