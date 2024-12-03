@@ -11,6 +11,9 @@ data class CreateProfileRequest(
     @Schema(description = "Имя")
     @field:Size(min = 1, max = 20)
     val name: String,
+    @Schema(description = "Электронная почта")
+    @field:Size(min = 9, max = 64)
+    val username: String,
     @Schema(description = "Фамилия")
     @field:Size(min = 1, max = 20)
     val surname: String,

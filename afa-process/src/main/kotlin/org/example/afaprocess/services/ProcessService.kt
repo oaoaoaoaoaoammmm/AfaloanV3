@@ -7,11 +7,11 @@ import org.example.afaprocess.models.Process
 import org.example.afaprocess.models.enumerations.ProcessStatus
 import org.example.afaprocess.repositories.ProcessRepository
 import org.example.afaprocess.services.clients.AfaOrderClient
+import org.example.afaprocess.services.clients.dtos.ProfileDto
 import org.example.afaprocess.utils.logger
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
@@ -59,22 +59,22 @@ class ProcessService(
             }
     }
 
-
     /**
-     * Calculates interest on the process with status ProcessStatus.IN_PROCESSING once a month
+     * Calculates interest on the process with status ProcessStatus.IN_PROCESSING
      *
      * @author Daniil Afanasev
      */
     @Transactional
-    @Scheduled(cron = "\${api.job.scheduler.process-debt}")
     @SchedulerLock(name = "calculateMonthlyInterest")
-    fun calculateMonthlyInterest() {
+    fun calculateDebt(): List<Pair<ProfileDto, Process>> {
         logger.info { "Calculating process debt" }
+        val pairs = mutableListOf<Pair<ProfileDto, Process>>()
         val processes = processRepository.findAllByStatus(ProcessStatus.IN_PROCESSING)
         val calculateProcess =
             processes.map {
                 val order = afaOrderClient.findOrder(it.bidId!!)
                 val microloan = afaOrderClient.findMicroloan(order.microloanId)
+                pairs.add(Pair(afaOrderClient.findProfile(order.profileId), it))
                 it.copy(
                     debt = it.debt.multiply(
                         BigDecimal.ONE.plus(microloan.monthlyInterest.divide(BigDecimal.valueOf(PERCENTS_100)))
@@ -83,6 +83,7 @@ class ProcessService(
             }
         processRepository.saveAll(calculateProcess)
         logger.info { "Calculated process successfully completed" }
+        return pairs
     }
 
     private companion object {

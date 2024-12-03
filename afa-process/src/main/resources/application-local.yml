@@ -22,7 +22,15 @@ spring:
             loggerLevel: basic
       afa-order:
         name: ${AFA_ORDER_NAME:afa-order}
-        url: ${AFA_ORDER_URL:afa-order}
+        url: ${AFA_ORDER_URL:localhost:8381}
+
+  kafka:
+    bootstrap-servers: localhost:29092, localhost:29093, localhost:29094
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    topics:
+      notification-email-topic: afa-notification-email-topic
 
 eureka:
   client:
@@ -31,7 +39,7 @@ eureka:
 api:
   job:
     scheduler:
-      process-debt: "0 * * * * *"
+      process-debt: "0 */5 * * * *"
 #0 0 0 ? * MON#1
 
 management:

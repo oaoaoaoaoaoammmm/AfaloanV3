@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-username-into-profile-table
+      author: d.afanasev
+      changes:
+        - addColumn:
+            schemaName: application
+            tableName: profiles
+            columns:
+              - column:
+                  name: username
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+                    unique: true

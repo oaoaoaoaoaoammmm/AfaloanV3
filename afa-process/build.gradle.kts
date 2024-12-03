@@ -53,6 +53,9 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql")
 	implementation ("net.lbruun.springboot:preliquibase-spring-boot-starter:$preliquibaseVersion")
 
+	// kafka
+	implementation("org.springframework.kafka:spring-kafka")
+
 	// security
 	implementation("org.springframework.boot:spring-boot-starter-security")
 
@@ -110,6 +113,7 @@ kover {
 				classes(
 					"*configurations*",
 					"*exceptions*",
+					"*kafka*",
 					"*utils*",
 					"*AfaProcessApplication*"
 				)

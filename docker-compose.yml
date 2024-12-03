@@ -30,6 +30,58 @@ services:
       - cloud
       - local
 
+  afa-zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: afa-zookeeper
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+
+  afa-kafka-broker-1:
+    image: confluentinc/cp-kafka:latest
+    container_name: afa-kafka-broker-1
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: afa-zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://afa-kafka-broker-1:9092, PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT, PLAINTEXT_HOST:PLAINTEXT
+    depends_on:
+      - afa-zookeeper
+
+  afa-kafka-broker-2:
+    image: confluentinc/cp-kafka:latest
+    container_name: afa-kafka-broker-2
+    ports:
+      - "9093:9093"
+      - "29093:29093"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: afa-zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://afa-kafka-broker-2:9093, PLAINTEXT_HOST://localhost:29093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT, PLAINTEXT_HOST:PLAINTEXT
+    depends_on:
+      - afa-zookeeper
+
+  afa-kafka-broker-3:
+    image: confluentinc/cp-kafka:latest
+    container_name: afa-kafka-broker-3
+    ports:
+      - "9094:9094"
+      - "29094:29094"
+    depends_on:
+      - afa-zookeeper
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: afa-zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://afa-kafka-broker-3:9094, PLAINTEXT_HOST://localhost:29094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT, PLAINTEXT_HOST:PLAINTEXT
+
   afa-discovery:
     container_name: afa-discovery-v3
     image: afa-discovery-v3
@@ -58,13 +110,12 @@ services:
       SPRING_PROFILES_ACTIVE: native
       DISCOVERY_SERVER_URL: http://eureka_client:eureka_password@afa-discovery:8761/eureka
       PORT: 8888
-
       # other services configs
-        # gateway
+      # gateway
       AFA_USER_NAME: afa-user
       AFA_ORDER_NAME: afa_order
       AFA_PROCESS_NAME: afa-process
-        # afa-user
+      # afa-user
       AFA_USER_R2DBC_URL: r2dbc:postgresql://afa-postgres:5432/afa_user
       AFA_USER_JDBC_URL: jdbc:postgresql://afa-postgres:5432/afa_user
       AFA_USER_DB_USER: username
@@ -72,22 +123,21 @@ services:
       SECRET: aGZiYmtiYWllYmNpZWFpZWJsZWNldWNlY2xhZWNhaWJlbGNhZWN3Q0VCV0VXSUM=
       ACCESS: 1
       REFRESH: 24
-        # afa-order
+      # afa-order
       AFA_ORDER_JDBC_URL: jdbc:postgresql://afa-postgres:5432/afa_order
       AFA_ORDER_DB_USER: username
       AFA_ORDER_DB_PASSWORD: password
-        # afa-process
+      # afa-process
       AFA_PROCESS_JDBC_URL: jdbc:postgresql://afa-postgres:5432/afa_process
       AFA_PROCESS_DB_USER: username
       AFA_PROCESS_DB_PASSWORD: password
       AFA_ORDER_URL: afa_order
-        # afa-file
+      # afa-file
       MINIO_ENDPOINT: http://afa-minio:9000
       MINIO_ACCESS_KEY: username
       MINIO_SECRET_KEY: password
       MINIO_BUCKET: afa-file
       MINIO_REGION: us-east-1
-
     depends_on:
       - afa-discovery
     profiles:
@@ -187,6 +237,9 @@ services:
       - afa-discovery
       - afa-config
       - afa-gateway
+      - afa-kafka-broker-1
+      - afa-kafka-broker-2
+      - afa-kafka-broker-3
     profiles:
       - cloud
 
@@ -207,5 +260,28 @@ services:
       - afa-discovery
       - afa-config
       - afa-gateway
+    profiles:
+      - cloud
+
+  afa-notification:
+    container_name: afa-notification-v3
+    image: afa-notification-v3
+    ports:
+      - "8491:8491"
+    build:
+      context: "afa-notification"
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: cloud
+      DISCOVERY_SERVER_URL: http://eureka_client:eureka_password@afa-discovery:8761/eureka
+      PORT: 8491
+    depends_on:
+      - afa-minio
+      - afa-discovery
+      - afa-config
+      - afa-gateway
+      - afa-kafka-broker-1
+      - afa-kafka-broker-2
+      - afa-kafka-broker-3
     profiles:
       - cloud

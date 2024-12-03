@@ -13,6 +13,7 @@ class ProfileMapper {
     fun convert(request: CreateProfileRequest): Profile {
         return Profile(
             name = request.name,
+            username = request.username,
             surname = request.surname,
             patronymic = request.patronymic,
             phoneNumber = request.phoneNumber,
@@ -28,6 +29,7 @@ class ProfileMapper {
     fun convert(request: UpdateProfileRequest): Profile {
         return Profile(
             name = request.name,
+            username = request.username,
             surname = request.surname,
             patronymic = request.patronymic,
             phoneNumber = request.phoneNumber,
@@ -41,6 +43,7 @@ class ProfileMapper {
     fun convert(profile: Profile): ProfileDto {
         return ProfileDto(
             id = profile.id,
+            username = profile.username,
             name = profile.name,
             surname = profile.surname,
             patronymic = profile.patronymic,
