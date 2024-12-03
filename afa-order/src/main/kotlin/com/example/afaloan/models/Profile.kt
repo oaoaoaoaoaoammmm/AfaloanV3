@@ -17,6 +17,9 @@ data class Profile(
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: UUID? = null,
 
+    @Column(name = "username")
+    val username: String,
+
     @Column(name = "name")
     val name: String,
 

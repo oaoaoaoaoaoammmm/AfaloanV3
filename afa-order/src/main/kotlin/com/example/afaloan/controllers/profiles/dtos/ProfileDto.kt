@@ -8,6 +8,8 @@ import java.util.*
 data class ProfileDto(
     @Schema(description = "Id")
     val id: UUID? = null,
+    @Schema(description = "Электронная почта")
+    val username: String,
     @Schema(description = "Имя")
     val name: String,
     @Schema(description = "Фамилия")

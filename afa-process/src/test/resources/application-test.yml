@@ -12,6 +12,10 @@ spring:
       afa-order:
         name: ${AFA_ORDER_NAME:afa-order}
 
+  kafka:
+    topics:
+      notification-email-topic: afa-notification-email-topic
+
 eureka:
   client:
     enabled: false

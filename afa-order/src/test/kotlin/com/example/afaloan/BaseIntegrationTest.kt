@@ -28,6 +28,7 @@ abstract class BaseIntegrationTest {
         mockSecurityContext()
     }
 
+
     @AfterEach
     fun tearDown() {
         SecurityContextHolder.clearContext()

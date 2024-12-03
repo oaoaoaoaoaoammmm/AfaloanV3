@@ -18,7 +18,7 @@ import java.util.*
 
 val USER_ID: UUID = UUID.randomUUID()
 
-const val USERNAME = "username"
+const val USERNAME = "username@list.ru"
 
 const val ROLE_SUPERVISOR = "SUPERVISOR"
 
@@ -32,6 +32,7 @@ const val ROLE_CUSTOMER = "CUSTOMER"
 
 fun createProfile() = Profile(
     id = UUID.randomUUID(),
+    username = UUID.randomUUID().toString(),
     name = "name",
     surname = "surname",
     patronymic = "patronymic",
@@ -44,6 +45,7 @@ fun createProfile() = Profile(
 
 fun createCreateProfileRequest() = CreateProfileRequest(
     name = "name",
+    username = UUID.randomUUID().toString(),
     surname = "surname",
     patronymic = "patronymic",
     phoneNumber = "+79832422045",
@@ -54,6 +56,7 @@ fun createCreateProfileRequest() = CreateProfileRequest(
 
 fun createUpdateProfileRequest() = UpdateProfileRequest(
     name = "name",
+    username = UUID.randomUUID().toString(),
     surname = "surname",
     patronymic = "patronymic",
     phoneNumber = "+79832422045",

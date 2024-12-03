@@ -1,11 +1,15 @@
 package org.example.afaprocess.services
 
+import org.assertj.core.api.Assertions.assertThat
 import org.example.afaprocess.exceptions.InternalException
 import org.example.afaprocess.models.Process
 import org.example.afaprocess.models.enumerations.ProcessStatus
 import org.example.afaprocess.repositories.ProcessRepository
 import org.example.afaprocess.services.clients.AfaOrderClient
+import org.example.afaprocess.utils.createMicroloanDto
+import org.example.afaprocess.utils.createOrderDto
 import org.example.afaprocess.utils.createProcess
+import org.example.afaprocess.utils.createProfileDto
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -35,7 +39,6 @@ class ProcessServiceTest {
             .verify()
     }
 
-
     @Test
     fun `find should throw PROCESS_NOT_FOUND`() {
         whenever(processRepository.findProcessById(any())).thenReturn(null)
@@ -44,7 +47,6 @@ class ProcessServiceTest {
             .expectError(InternalException::class)
             .verify()
     }
-
 
     @Test
     fun `findPage should execute successfully`() {
@@ -57,7 +59,6 @@ class ProcessServiceTest {
             .verify()
     }
 
-
     @Test
     fun `create should execute successfully`() {
         val process = createProcess()
@@ -68,7 +69,6 @@ class ProcessServiceTest {
             .expectComplete()
             .verify()
     }
-
 
     @Test
     fun `update should execute successfully`() {
@@ -83,15 +83,22 @@ class ProcessServiceTest {
             .verify()
     }
 
+    @Test
+    fun `calculateDebt should execute successfully`() {
+        val process = createProcess()
+        val order = createOrderDto()
+        val microloan = createMicroloanDto()
+        val profile = createProfileDto()
+        whenever(processRepository.findAllByStatus(any())).thenReturn(listOf(process))
+        whenever(afaOrderClient.findOrder(any())).thenReturn(order)
+        whenever(afaOrderClient.findMicroloan(any())).thenReturn(microloan)
+        whenever(afaOrderClient.findProfile(any())).thenReturn(profile)
+        val pairs = processService.calculateDebt()
 
-    /*
-@Test
-fun `calculateMonthlyInterest should execute successfully`() {
-val processes = listOf(createProcess(), createProcess(), createProcess())
-whenever(processRepository.findAllByStatus(any())).thenReturn(processes)
-
-assertDoesNotThrow { processService.calculateMonthlyInterest() }
-}
-
-*/
+        assertThat(pairs.size).isEqualTo(1)
+        pairs.forEach { pair ->
+            assertThat(pair.first).isEqualTo(profile)
+            assertThat(pair.second.debt).isEqualTo(BigDecimal.valueOf(10.0))
+        }
+    }
 }
