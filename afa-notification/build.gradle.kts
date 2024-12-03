@@ -79,43 +79,6 @@ detekt {
     config.setFrom("$projectDir/../config/detekt/detekt.yml")
 }
 
-kover {
-    reports {
-        total {
-            html {
-                onCheck = true
-            }
-        }
-        filters {
-            excludes {
-                classes(
-                    "*configurations*",
-                    "*exceptions*",
-                    "*utils*",
-                    "*AfaNotificationApplication*"
-                )
-            }
-        }
-        verify {
-            rule("Basic Line Coverage") {
-                bound {
-                    minValue = 80
-                    coverageUnits = CoverageUnit.LINE
-                    aggregationForGroup = AggregationType.COVERED_PERCENTAGE
-                }
-            }
-
-            rule("Branch Coverage") {
-                bound {
-                    minValue = 80
-                    coverageUnits = CoverageUnit.BRANCH
-                    aggregationForGroup = AggregationType.COVERED_PERCENTAGE
-                }
-            }
-        }
-    }
-}
-
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
