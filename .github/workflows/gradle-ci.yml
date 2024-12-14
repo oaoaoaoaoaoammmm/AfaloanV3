@@ -119,9 +119,7 @@ jobs:
       - name: Build and Push Docker Images
         run: |
           for service in afa-admin afa-config afa-discovery afa-file afa-gateway afa-notification afa-order afa-process afa-user; do
-            cd ./$service
             echo "Building and pushing image for $service"
-            docker build -t ${{ secrets.DOCKER_USERNAME }}/$service:latest .
-            docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO_NAME }}/$service:latest
-            cd ./..
+            docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO_NAME }}:$service-latest ./$service
+            docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO_NAME }}:$service-latest
           done
