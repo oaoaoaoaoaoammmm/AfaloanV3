@@ -12,6 +12,6 @@ FROM amazoncorretto:21-alpine
 
 WORKDIR /app
 
-COPY --from=build /workspace/build/libs/afa-discovery-2.0.0.jar ./afa-discovery.jar
+COPY --from=build /workspace/build/libs/afa-discovery-3.0.0.jar ./afa-discovery.jar
 
 ENTRYPOINT ["java", "-jar", "afa-discovery.jar"]
