@@ -73,6 +73,19 @@ jobs:
           java-version: '21'
           distribution: 'corretto'
 
+      # Разрешение прав на выполнение для gradlew
+      - name: Grant execute permission to gradlew
+        run: |
+          chmod +x ./afa-admin/gradlew
+          chmod +x ./afa-config/gradlew 
+          chmod +x ./afa-discovery/gradlew
+          chmod +x ./afa-file/gradlew
+          chmod +x ./afa-gateway/gradlew
+          chmod +x ./afa-notification/gradlew
+          chmod +x ./afa-order/gradlew
+          chmod +x ./afa-process/gradlew
+          chmod +x ./afa-user/gradlew
+
       # Выполнение тестов Gradle
       - name: Run Tests with Gradle
         run: |
