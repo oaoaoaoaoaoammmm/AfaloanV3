@@ -47,15 +47,15 @@ jobs:
       # Выполнение сборки Gradle без тестов
       - name: Build with Gradle (skip tests)
         run: |
-          cd ./afa-admin && ./gradlew build -x test --no-daemon
-          cd ../afa-config && ./gradlew build -x test --no-daemon
-          cd ../afa-discovery && ./gradlew build -x test --no-daemon
-          cd ../afa-file && ./gradlew build -x test --no-daemon
-          cd ../afa-gateway && ./gradlew build -x test --no-daemon
-          cd ../afa-notification && ./gradlew build -x test --no-daemon
-          cd ../afa-order && ./gradlew build -x test --no-daemon
-          cd ../afa-process && ./gradlew build -x test --no-daemon
-          cd ../afa-user && ./gradlew build -x test --no-daemon
+          cd ./afa-admin && ./gradlew build -x test -x koverVerify --no-daemon
+          cd ../afa-config && ./gradlew build -x test -x koverVerify --no-daemon
+          cd ../afa-discovery && ./gradlew build -x test -x koverVerify --no-daemon
+          cd ../afa-file && ./gradlew build -x test -x koverVerify --no-daemon
+          cd ../afa-gateway && ./gradlew build -x test -x koverVerify --no-daemon
+          cd ../afa-notification && ./gradlew build -x test -x koverVerify --no-daemon
+          cd ../afa-order && ./gradlew build -x test -x koverVerify --no-daemon
+          cd ../afa-process && ./gradlew build -x test -x koverVerify --no-daemon
+          cd ../afa-user && ./gradlew build -x test -x koverVerify --no-daemon
 
   test:
     runs-on: ubuntu-22.04
