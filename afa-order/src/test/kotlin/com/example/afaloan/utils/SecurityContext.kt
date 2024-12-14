@@ -19,7 +19,7 @@ fun mockSecurityContext() {
 private fun createTestAuthentication(): Authentication {
     val auth = mock<UsernamePasswordAuthenticationToken>()
     whenever(auth.principal).thenReturn(USER_ID.toString())
-    whenever(auth.credentials).thenReturn(USERNAME)
+    whenever(auth.credentials).thenReturn(UUID.randomUUID().toString())
     whenever(auth.authorities).thenReturn(
         listOf(ROLE_SUPERVISOR, ROLE_WORKER, ROLE_CUSTOMER)
             .map { SimpleGrantedAuthority(it) }

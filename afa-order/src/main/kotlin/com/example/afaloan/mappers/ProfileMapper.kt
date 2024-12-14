@@ -13,7 +13,7 @@ class ProfileMapper {
     fun convert(request: CreateProfileRequest): Profile {
         return Profile(
             name = request.name,
-            username = request.username,
+            username = SecurityContext.getAuthorizedUserUsername(),
             surname = request.surname,
             patronymic = request.patronymic,
             phoneNumber = request.phoneNumber,
