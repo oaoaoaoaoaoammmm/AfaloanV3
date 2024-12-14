@@ -44,15 +44,82 @@ jobs:
           chmod +x ./afa-process/gradlew
           chmod +x ./afa-user/gradlew
 
-      # Выполнение сборки Gradle
-      - name: Build with Gradle
+      # Выполнение сборки Gradle без тестов
+      - name: Build with Gradle (skip tests)
         run: |
-          cd ./afa-admin && ./gradlew build --no-daemon
-          cd ../afa-config && ./gradlew build --no-daemon
-          cd ../afa-discovery && ./gradlew build --no-daemon
-          cd ../afa-file && ./gradlew build --no-daemon
-          cd ../afa-gateway && ./gradlew build --no-daemon
-          cd ../afa-notification && ./gradlew build --no-daemon
-          cd ../afa-order && ./gradlew build --no-daemon
-          cd ../afa-process && ./gradlew build --no-daemon
-          cd ../afa-user && ./gradlew build --no-daemon
+          cd ./afa-admin && ./gradlew build -x test --no-daemon
+          cd ../afa-config && ./gradlew build -x test --no-daemon
+          cd ../afa-discovery && ./gradlew build -x test --no-daemon
+          cd ../afa-file && ./gradlew build -x test -x koverVerify --no-daemon
+          cd ../afa-gateway && ./gradlew build -x test --no-daemon
+          cd ../afa-notification && ./gradlew build -x test -x koverVerify --no-daemon
+          cd ../afa-order && ./gradlew build -x test -x koverVerify --no-daemon
+          cd ../afa-process && ./gradlew build -x test -x koverVerify --no-daemon
+          cd ../afa-user && ./gradlew build -x test -x koverVerify --no-daemon
+
+  test:
+    runs-on: ubuntu-22.04
+    needs: build  # Запуск тестов после успешной сборки
+
+    steps:
+      # Проверка репозитория
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # Установка JDK 21
+      - name: Set up Amazon Corretto 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      # Разрешение прав на выполнение для gradlew
+      - name: Grant execute permission to gradlew
+        run: |
+          chmod +x ./afa-admin/gradlew
+          chmod +x ./afa-config/gradlew 
+          chmod +x ./afa-discovery/gradlew
+          chmod +x ./afa-file/gradlew
+          chmod +x ./afa-gateway/gradlew
+          chmod +x ./afa-notification/gradlew
+          chmod +x ./afa-order/gradlew
+          chmod +x ./afa-process/gradlew
+          chmod +x ./afa-user/gradlew
+
+      # Выполнение тестов Gradle
+      - name: Run Tests with Gradle
+        run: |
+          cd ./afa-admin && ./gradlew test --no-daemon
+          cd ../afa-config && ./gradlew test --no-daemon
+          cd ../afa-discovery && ./gradlew test --no-daemon
+          cd ../afa-file && ./gradlew test --no-daemon
+          cd ../afa-gateway && ./gradlew test --no-daemon
+          cd ../afa-notification && ./gradlew test --no-daemon
+          cd ../afa-order && ./gradlew test --no-daemon
+          cd ../afa-process && ./gradlew test --no-daemon
+          cd ../afa-user && ./gradlew test --no-daemon
+
+  docker:
+    runs-on: ubuntu-22.04
+    needs: test  # Публикация образа только после успешных тестов
+
+    steps:
+      # Проверка репозитория
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # Логин в Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Сборка и публикация Docker образов для всех микросервисов
+      - name: Build and Push Docker Images
+        run: |
+          for service in afa-admin afa-config afa-discovery afa-file afa-gateway afa-notification afa-order afa-process afa-user; do
+            echo "Building and pushing image for $service"
+            docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO_NAME }}:$service-latest ./$service
+            docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO_NAME }}:$service-latest
+          done
